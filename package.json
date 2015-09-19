@@ -1,0 +1,9 @@
+{
+  "name": "leapmotion2parrot",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "leapjs": "^0.6.4"
+  }
+}
