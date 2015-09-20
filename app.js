@@ -31,6 +31,7 @@ var cap = function(n, mult) {
 };
 
 leap.on('frame', function(frame) {
+  console.log('waiting', waiting);
   if (waiting && !TEST_MODE) return;
 
   if (frame.hands.length) {
@@ -40,7 +41,7 @@ leap.on('frame', function(frame) {
       if (active) {
         debug('LAND');
         active = false;
-        waiting = true;
+        //waiting = true;
         drone.land(function() {
           waiting = false;
         });
@@ -54,7 +55,7 @@ leap.on('frame', function(frame) {
         pitch0 = hand.pitch();
         roll0 = hand.roll();
         yaw0 = hand.yaw();
-        waiting = true;
+        //waiting = true;
         drone.takeoff(function() {
           waiting = false;
         });
