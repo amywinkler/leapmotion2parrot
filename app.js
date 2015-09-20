@@ -15,7 +15,7 @@ var yaw0 = 0;
 var cap = function(n) {
   n = Math.min(n, 1);
   n = Math.max(n, -1);
-  n *= 0.2;
+  n *= 0.5;
   return n;
 };
 
@@ -57,7 +57,7 @@ controller.on('frame', function(frame) {
         drone.back(pitch);
       } else {
         console.log('forward');
-        drone.forward(-pitch);
+        drone.front(-pitch);
       }
       if (roll > 0) {
         console.log('left');
