@@ -1,5 +1,8 @@
 'use strict';
 
+// set to true when not connected to drone
+var TEST_MODE = false;
+
 var Leap = require('leapjs');
 var arDrone = require('ar-drone');
 var debug = require('debug')('app');
@@ -13,6 +16,8 @@ var pitch0 = 0;
 var roll0 = 0;
 var yaw0 = 0;
 
+var waiting = false;
+
 var cap = function(n, mult) {
   mult = mult || 0.5;
   n = Math.min(n, 1);
@@ -22,6 +27,8 @@ var cap = function(n, mult) {
 };
 
 controller.on('frame', function(frame) {
+  if (waiting && !TEST_MODE) return;
+
   if (frame.hands.length) {
     var hand = frame.hands[0];
 
@@ -29,7 +36,10 @@ controller.on('frame', function(frame) {
       if (active) {
         debug('LAND');
         active = false;
-        drone.land();
+        waiting = true;
+        drone.land(function() {
+          waiting = false;
+        });
       }
     } else {
       if (!active) {
@@ -40,7 +50,10 @@ controller.on('frame', function(frame) {
         pitch0 = hand.pitch();
         roll0 = hand.roll();
         yaw0 = hand.yaw();
-        drone.takeoff();
+        waiting = true;
+        drone.takeoff(function() {
+          waiting = false;
+        });
       }
 
       var y = hand.palmPosition[1] - y0;
