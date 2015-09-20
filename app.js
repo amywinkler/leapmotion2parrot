@@ -2,6 +2,7 @@
 
 var Leap = require('leapjs');
 var arDrone = require('ar-drone');
+var debug = require('debug')('app');
 
 var controller = new Leap.Controller();
 var drone = arDrone.createClient();
@@ -12,10 +13,11 @@ var pitch0 = 0;
 var roll0 = 0;
 var yaw0 = 0;
 
-var cap = function(n) {
+var cap = function(n, mult) {
+  mult = mult || 0.5;
   n = Math.min(n, 1);
   n = Math.max(n, -1);
-  n *= 0.5;
+  n *= mult;
   return n;
 };
 
@@ -24,11 +26,15 @@ controller.on('frame', function(frame) {
     var hand = frame.hands[0];
 
     if (hand.grabStrength > 0.9) {
-      active = false;
-      drone.land();
+      if (active) {
+        debug('LAND');
+        active = false;
+        drone.land();
+      }
     } else {
       if (!active) {
         // first open fist
+        debug('TAKE OFF');
         active = true;
         y0 = hand.palmPosition[1];
         pitch0 = hand.pitch();
@@ -39,12 +45,12 @@ controller.on('frame', function(frame) {
 
       var y = hand.palmPosition[1] - y0;
       y /= 200;
-      y = cap(y);
+      y = cap(y, 1);
       if (y > 0) {
-        console.log('up');
+        debug('up');
         drone.up(y);
       } else {
-        console.log('down');
+        debug('down');
         drone.down(-y);
       }
 
@@ -53,24 +59,24 @@ controller.on('frame', function(frame) {
       var yaw = cap(hand.yaw() - yaw0); // rotation left (-1) and right (+1)
 
       if (pitch > 0) {
-        console.log('back');
+        debug('back');
         drone.back(pitch);
       } else {
-        console.log('forward');
+        debug('forward');
         drone.front(-pitch);
       }
       if (roll > 0) {
-        console.log('left');
+        debug('left');
         drone.left(roll);
       } else {
-        console.log('right');
+        debug('right');
         drone.right(-roll);
       }
       if (yaw > 0) {
-        console.log('turn right');
+        debug('turn right');
         drone.clockwise(yaw);
       } else {
-        console.log('turn left');
+        debug('turn left');
         drone.clockwise(-yaw);
       }
     }
