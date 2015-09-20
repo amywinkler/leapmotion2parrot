@@ -7,8 +7,10 @@ var Leap = require('leapjs');
 var arDrone = require('ar-drone');
 var debug = require('debug')('app');
 
-var controller = new Leap.Controller();
+var leap = new Leap.Controller();
 var drone = arDrone.createClient();
+//require('ar-drone-png-stream')(drone, { port: 8000 });
+var http = require('http');
 
 var active = false;
 var y0 = 0;
@@ -26,7 +28,7 @@ var cap = function(n, mult) {
   return n;
 };
 
-controller.on('frame', function(frame) {
+leap.on('frame', function(frame) {
   if (waiting && !TEST_MODE) return;
 
   if (frame.hands.length) {
@@ -96,4 +98,15 @@ controller.on('frame', function(frame) {
   }
 });
 
-controller.connect();
+leap.connect();
+
+/*var video = drone.getVideoStream();
+video.on('data', function(e) {
+  console.log('e', e);
+});*/
+
+var server = http.createServer(function(req, res) {
+  require('fs').createReadStream(__dirname + '/index.html').pipe(res);
+});
+require('dronestream').listen(server);
+server.listen(5555);

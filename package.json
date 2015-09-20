@@ -5,7 +5,9 @@
   "scripts": {},
   "dependencies": {
     "ar-drone": "^0.3.3",
+    "ar-drone-png-stream": "^2.0.0",
     "debug": "^2.2.0",
+    "dronestream": "^1.1.1",
     "leapjs": "^0.6.4"
   }
 }
