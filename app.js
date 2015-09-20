@@ -12,6 +12,7 @@ var drone = arDrone.createClient();
 //require('ar-drone-png-stream')(drone, { port: 8000 });
 var http = require('http');
 var express = require('express');
+var fs = require('fs');
 
 var active = false;
 var y0 = 0;
@@ -102,8 +103,10 @@ leap.on('frame', function(frame) {
 leap.connect();
 
 /*var video = drone.getVideoStream();
-video.on('data', function(e) {
-  console.log('e', e);
+video.on('data', function(data) {
+  fs.appendFile('/Users/greg/Desktop/test', data, function(err) {
+    console.log('wrote', err);
+  });
 });*/
 
 var app = express();
